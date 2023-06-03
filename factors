@@ -15,6 +15,7 @@ Where q and n are factors of p
 ::
 """
 import sys
+import math
 
 
 def factorize():
@@ -24,13 +25,14 @@ def factorize():
         return
     with open(sys.argv[1]) as file:
         for line in file:
+            number = int(line)
             ln = 2
-            while True:
-                if int(line) % ln != 0:
-                    ln += 1
-                    continue
-                print(f"{int(line)}={int(line) // ln}*{ln}")
-                break
+            num_sqrt = math.isqrt(number)
+            while ln <= num_sqrt:
+                if number % ln == 0:
+                    print(f"{int(line)}={int(line) // ln}*{ln}")
+                    break
+                ln += 1
 
 
 if __name__ == '__main__':
