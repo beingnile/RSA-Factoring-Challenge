@@ -21,18 +21,22 @@ import math
 def factorize():
     """Factorizes input natural numbers"""
     if len(sys.argv) != 2:
-        print("Usage: factors <file>", file=sys.stderr)
+        sys.stdout.write("Usage: factors <file>", file=sys.stderr)
         return
     with open(sys.argv[1]) as file:
         for line in file:
             number = int(line)
-            ln = 2
-            num_sqrt = math.isqrt(number)
-            while ln <= num_sqrt:
+            ln = 2 # Possible divisor
+            sqrt_num = math.isqrt(number)
+            if number % 2 == 0:
+                print(f"{number}={number // 2}*2")
+                continue
+            for ln in range(3, sqrt_num + 1, 2):
                 if number % ln == 0:
-                    print(f"{int(line)}={int(line) // ln}*{ln}")
+                    print(f"{number}={number // ln}*{ln}")
                     break
-                ln += 1
+            else:
+                print(f"{number}={number // ln}*{ln}")
 
 
 if __name__ == '__main__':
