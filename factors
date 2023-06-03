@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+"""Reads file with natural numbers p and returns p=q*n to stdout.
+Where q and n are factors of p
+
+::
+    Usage: factors <file>, where <file> is a file containing
+    numbers to factor.
+
+    Assumptions:
+    - The file has one number per line
+    - All lines will be valid natural numbers greater than 1
+    - There will be no empty line, and no space before and after the
+    valid number
+    - The file will always end with a new line
+::
+"""
+import sys
+
+
+def factorize():
+    """Factorizes input natural numbers"""
+    if len(sys.argv) != 2:
+        print("Usage: factors <file>", file=sys.stderr)
+        return
+    with open(sys.argv[1]) as file:
+        for line in file:
+            ln = 2
+            while True:
+                if int(line) % ln != 0:
+                    ln += 1
+                    continue
+                print(f"{int(line)}={int(line) // ln}*{ln}")
+                break
+
+
+if __name__ == '__main__':
+    factorize()
