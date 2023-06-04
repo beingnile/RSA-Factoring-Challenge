@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""RSA Laboratories states that: for each RSA number n, there exist prime
+numbers p and q such that n = p × q. The problem is to find these two
+primes, given only n.
+The code utilizes the pollard's rho algorithm to optimize factorization.
+
+::
+    Factorizes a number n from a file into two prime numbers n and q
+    Usage: ./rsa <file> where file is the file containing the natural
+    number to factorize
+
+    Prints to stdout the number and the prime factors in the format n=p*q
+    Where p and q are prime factors of number n.
+::
+"""
+import sys
+import math
+import random
+
+
+def gcd(a, b):
+    """Computes the gcd of two values"""
+    while b:
+        a, b = b, a % b
+    return a
+
+
+def is_prime(n):
+    """Checks if value is a prime number"""
+    if n <= 1:
+        return False
+    if n <= 3:
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
+    for i in range(5, math.isqrt(n) + 1, 6):
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+    return True
+
+
+def pollard_rho(n):
+    """Implementation of pollard's rho for integer factorization
+
+    Args: n(int) : Integer to factorize
+
+    Returns: A factor of n
+    """
+    if n % 2 == 0:
+        return 2
+    x = random.randint(1, n - 1)
+    y = x
+    c = random.randint(1, n - 1)
+    d = 1
+    while d == 1:
+        x = (pow(x, 2, n) + c) % n  # pow function translates to x**2 % n
+        y = (pow(y, 2, n) + c) % n
+        y = (pow(y, 2, n) + c) % n
+        d = gcd(abs(x - y), n)
+        if d == n:
+            return pollard_rho(n)
+    return d
+
+
+def factorize(number):
+    """Factorizes a number from a file into two prime factors"""
+    if is_prime(number):
+        print(f"{number}={number}*1")
+    else:
+        factor = pollard_rho(number)
+        while not is_prime(factor):
+            sec_factor = pollard_rho(number)
+        sec_factor = number // factor
+        while not is_prime(sec_factor):
+            sec_factor = pollard_rho(number)
+        print(f"{number}={sec_factor}*{factor}")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: rsa <file>", file=sys.stderr)
+        sys.exit(1)
+
+    with open(sys.argv[1], "r") as file:
+        num = int(file.readline())
+        factorize(num)
